@@ -1,8 +1,8 @@
 # My thanks to Jared White's Bulmatown plugin from whom I stole most of this
 
-add_bridgetown_plugin "brinima"
-add_bridgetown_plugin "bridgetown-quick-search"
-add_bridgetown_plugin "bridgetown-feed"
+# add_bridgetown_plugin "brinima"
+# add_bridgetown_plugin "bridgetown-quick-search"
+# add_bridgetown_plugin "bridgetown-feed"
 
 #add_yarn_for_gem "bulmatown"
 
