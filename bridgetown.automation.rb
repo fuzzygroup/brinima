@@ -34,7 +34,6 @@ def backup_existing_theme_files
   unless Dir.exist? MASTER_BACKUP_DIR
     # generate a master backup directory  
     FileUtils.mkdir_p MASTER_BACKUP_DIR
-    backup_existing_theme_files
   end
   
   # generate timestamp
@@ -42,7 +41,7 @@ def backup_existing_theme_files
   
   backup_directory = File.join(MASTER_BACKUP_DIR, backup_time_stamp)
   
-  create_directory(backup_directory)
+  FileUtils.mkdir(backup_directory)
   # copy all files from directorys
   source_directories = []
   source_directories << "src/_components"
