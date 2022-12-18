@@ -9,19 +9,6 @@ add_bridgetown_plugin "bridgetown-feed"
 require 'fileutils'
 require 'shellwords'
 
-# unless Dir.exist? "frontend/fonts"
-#   FileUtils.mkdir_p "frontend/fonts"
-# end
-
-MASTER_BACKUP_DIR = "src/theme_backups"
-
-#
-# Backup all existing theme files
-#
-backup_existing_theme_files
-
-raise "Foo -- test if the backup worked!!!"
-
 #run "cp node_modules/fork-awesome/fonts/* frontend/fonts"
 
 #javascript_import 'import Bulmatown from "bulmatown"'
@@ -73,6 +60,21 @@ def backup_existing_theme_files
   #
   puts "Need to remove existing files"
 end
+
+# unless Dir.exist? "frontend/fonts"
+#   FileUtils.mkdir_p "frontend/fonts"
+# end
+
+MASTER_BACKUP_DIR = "src/theme_backups"
+
+#
+# Backup all existing theme files
+#
+backup_existing_theme_files
+
+raise "Foo -- test if the backup worked!!!"
+
+
 
 # Copied from: https://github.com/mattbrictson/rails-template
 # Add this template directory to source_paths so that Thor actions like
