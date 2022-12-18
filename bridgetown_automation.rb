@@ -13,6 +13,15 @@ require 'shellwords'
 #   FileUtils.mkdir_p "frontend/fonts"
 # end
 
+MASTER_BACKUP_DIR = "src/theme_backups"
+
+#
+# Backup all existing theme files
+#
+backup_existing_theme_files
+
+raise "Foo -- test if the backup worked!!!"
+
 #run "cp node_modules/fork-awesome/fonts/* frontend/fonts"
 
 #javascript_import 'import Bulmatown from "bulmatown"'
@@ -35,18 +44,34 @@ DIR_NAME = File.basename(ROOT_PATH)
 GITHUB_PATH = "https://github.com/fuzzygroup/#{DIR_NAME}.git"
 
 def backup_existing_theme_files
-  # generate a back up directory
-  create_directory("src/theme_backups")
+  unless Dir.exist? MASTER_BACKUP_DIR
+    # generate a master backup directory  
+    FileUtils.mkdir_p MASTER_BACKUP_DIR
+    backup_existing_theme_files
+  end
+  
   # generate timestamp
   backup_time_stamp = Time.now.utc.strftime("%Y%m%d%H%M%S")
-  create_directory("src/theme_backups/#{backup_time_stamp}")
+  
+  backup_directory = File.join(MASTER_BACKUP_DIR, backup_time_stamp)
+  
+  create_directory(backup_directory)
   # copy all files from directorys
   source_directories = []
-  source_directories << "src/_layouts"
   source_directories << "src/_components"
   source_directories << "src/_layouts"
+  # TODO -- javascript and css
 
   # copy files from sources
+  source_directories.each do |source_dir|
+    destination_dir = File.join(backup_directory, source_dir)
+    FileUtils.cp source_dir, destination_dir
+  end
+  
+  #
+  # Now remove existing files 
+  #
+  puts "Need to remove existing files"
 end
 
 # Copied from: https://github.com/mattbrictson/rails-template
