@@ -77,12 +77,32 @@ def backup_existing_theme_files
   end
   
   # Copy metadata over before it is modified
+  source_dir = "src/_data/"
+  destination_dir = File.join(backup_directory, source_dir)
+  unless Dir.exist?(destination_dir)
+    FileUtils.mkdir_p(destination_dir)
+  end
   FileUtils.cp File.join('src/_data', 'site_metadata.yml'), destination_dir
   
   #
   # Now remove existing files 
   #
   puts "Now removing existing files except for site_metadata.yml"
+  directories_of_all_files_to_delete = []
+  directories_of_all_files_to_delete << 'src/_components'
+  directories_of_all_files_to_delete << 'src/_layouts'
+  directories_of_all_files_to_delete.each do |dir|
+    Dir.glob(dir).each do |f|
+      FileUtils.rm(f)
+    end
+  end
+  
+  single_files_to_delete = []
+  single_files_to_delete << File.join('src', 'index.md')
+  single_files_to_delete << File.join('src', 'posts.md')
+  single_files_to_delete.each do |f|
+    FileUtils.rm(f)
+  end
 end
 
 # Copied from: https://github.com/mattbrictson/rails-template
