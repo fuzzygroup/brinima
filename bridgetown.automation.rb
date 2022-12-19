@@ -73,7 +73,9 @@ def backup_existing_theme_files
     unless Dir.exist?(destination_dir)
       FileUtils.mkdir_p(destination_dir)
     end
-    FileUtils.cp source_dir, destination_dir
+    Dir.glob(File.join(source_dir, '*')).each do |f|
+      FileUtils.cp f, destination_dir unless File.exists?(File.join(destination_dir, f))
+    end
   end
   
   # Copy metadata over before it is modified
@@ -92,7 +94,7 @@ def backup_existing_theme_files
   directories_of_all_files_to_delete << 'src/_components'
   directories_of_all_files_to_delete << 'src/_layouts'
   directories_of_all_files_to_delete.each do |dir|
-    Dir.glob(dir).each do |f|
+    Dir.glob(File.join(dir, '*')).each do |f|
       FileUtils.rm(f)
     end
   end
