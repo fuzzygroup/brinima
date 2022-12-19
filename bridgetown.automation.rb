@@ -1,35 +1,34 @@
 # My thanks to Jared White's Bulmatown plugin from whom I stole most of this
+# but then HEAVILY restructured
+#
+# Current structure is
+# 1. def methods
+# 2. plugins
+# 3. requirements
+# 4. Front End
+# 5. Everything Else
 
-# add_bridgetown_plugin "brinima"
-# add_bridgetown_plugin "bridgetown-quick-search"
-# add_bridgetown_plugin "bridgetown-feed"
 
-#add_yarn_for_gem "bulmatown"
 
-require 'fileutils'
-require 'shellwords'
 
-#run "cp node_modules/fork-awesome/fonts/* frontend/fonts"
+#
+# START DEF METHODS
+#
 
-#javascript_import 'import Bulmatown from "bulmatown"'
+#
+# Check if a given gem is already installed
+#
+def gem_installed?(gem_name)
+  #https://stackoverflow.com/questions/22211711/how-to-check-if-a-gem-is-installed
+  # gem query --silent --installed --exact rubygems --version 2.0.0
+  result = `gem list bridgetown-feed`
+  return true if result =~ /#{gem_name}/
+  false
+end
 
-# *** Set up remote repo pull
-
-# Dynamically determined due to having to load from the tempdir
-@current_dir = File.expand_path(__dir__)
-
-# If its a remote file, the branch is appended to the end, so go up a level
-ROOT_PATH = if __FILE__ =~ %r{\Ahttps?://}
-              File.expand_path('../', __dir__)
-            else
-              File.expand_path(__dir__)
-            end
-
-DIR_NAME = File.basename(ROOT_PATH)
-
-# DIR_NAME = 'brinima'
-GITHUB_PATH = "https://github.com/fuzzygroup/#{DIR_NAME}.git"
-
+#
+# Create a backup directory for theme files and copy data over to it
+#
 def backup_existing_theme_files
   unless Dir.exist? MASTER_BACKUP_DIR
     # generate a master backup directory  
@@ -38,10 +37,14 @@ def backup_existing_theme_files
   
   # generate timestamp
   backup_time_stamp = Time.now.utc.strftime("%Y%m%d%H%M%S")
+  backup_time_stamp = '20221218132228'
   
   backup_directory = File.join(MASTER_BACKUP_DIR, backup_time_stamp)
   
-  FileUtils.mkdir(backup_directory)
+  #TODO - error handling
+  unless Dir.exist?(backup_directory)
+    FileUtils.mkdir(backup_directory)
+  end
   # copy all files from directorys
   source_directories = []
   source_directories << "src/_components"
@@ -51,29 +54,21 @@ def backup_existing_theme_files
   # copy files from sources
   source_directories.each do |source_dir|
     destination_dir = File.join(backup_directory, source_dir)
+    #TODO - error handling
+    unless Dir.exist?(destination_dir)
+      FileUtils.mkdir(destination_dir)
+    end
     FileUtils.cp source_dir, destination_dir
   end
+  
+  # Copy metadata over before it is modified
+  FileUtils.cp File.join('src/_data', 'site_metadata.yml'), destination_dir
   
   #
   # Now remove existing files 
   #
-  puts "Need to remove existing files"
+  puts "Now removing existing files except for site_metadata.yml"
 end
-
-# unless Dir.exist? "frontend/fonts"
-#   FileUtils.mkdir_p "frontend/fonts"
-# end
-
-MASTER_BACKUP_DIR = "src/theme_backups"
-
-#
-# Backup all existing theme files
-#
-backup_existing_theme_files
-
-raise "Foo -- test if the backup worked!!!"
-
-
 
 # Copied from: https://github.com/mattbrictson/rails-template
 # Add this template directory to source_paths so that Thor actions like
@@ -111,6 +106,107 @@ def substitute_in_default_if_exists
     say_status :bulmatown, "Could not find the default template. You will have to add the url parameter to the render command manually"
   end
 end
+
+
+
+#
+# END DEF METHODS
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# END TO END FLOW
+#
+
+#
+# PLUGINS
+# 
+# add_bridgetown_plugin "brinima" unless gem_installed?("brinima")
+add_bridgetown_plugin "bridgetown-quick-search" unless gem_installed?("bridgetown-quick-search")
+add_bridgetown_plugin "bridgetown-feed" unless gem_installed?("bridgetown-feed")
+
+
+#add_yarn_for_gem "bulmatown"
+
+
+#
+# REQUIREMENTS
+#
+require 'fileutils'
+require 'shellwords'
+
+
+#
+# FRONT END
+#
+#run "cp node_modules/fork-awesome/fonts/* frontend/fonts"
+
+#javascript_import 'import Bulmatown from "bulmatown"'
+
+# *** Set up remote repo pull
+
+
+
+# Dynamically determined due to having to load from the tempdir
+@current_dir = File.expand_path(__dir__)
+
+# If its a remote file, the branch is appended to the end, so go up a level
+ROOT_PATH = if __FILE__ =~ %r{\Ahttps?://}
+              File.expand_path('../', __dir__)
+            else
+              File.expand_path(__dir__)
+            end
+
+DIR_NAME = File.basename(ROOT_PATH)
+
+# DIR_NAME = 'brinima'
+GITHUB_PATH = "https://github.com/fuzzygroup/#{DIR_NAME}.git"
+
+THEME_NAME = "brinima"
+
+
+
+# unless Dir.exist? "frontend/fonts"
+#   FileUtils.mkdir_p "frontend/fonts"
+# end
+
+MASTER_BACKUP_DIR = "src/theme_backups"
+
+#
+# Backup all existing theme files
+#
+backup_existing_theme_files
+
+raise "Foo -- test if the backup worked!!!"
+
+
+
+
+
+
 
 if yes? "The Bulmatown installer can update styles, layouts, and page templates to use the new theme. You'll have the option to type 'a' to overwrite all existing files or 'd' to inspect each change. Would you like to proceed? (Y/N)"
   add_template_repository_to_source_path
