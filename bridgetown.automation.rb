@@ -71,7 +71,7 @@ def backup_existing_theme_files
     destination_dir = File.join(backup_directory, source_dir)
     #TODO - error handling
     unless Dir.exist?(destination_dir)
-      FileUtils.mkdir(destination_dir)
+      FileUtils.mkdir_p(destination_dir)
     end
     FileUtils.cp source_dir, destination_dir
   end
