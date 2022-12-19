@@ -18,10 +18,25 @@
 #
 # Check if a given gem is already installed
 #
+=begin
+Need to adjust this to handle version issues
+
+[!] There was an error parsing `injected gems`: You cannot specify the same gem twice with different version requirements.
+You specified: bridgetown-quick-search (~> 1.1) and bridgetown-quick-search (>= 0). Gem already added. Bundler cannot continue.
+
+ #  from injected gems:1
+ #  -------------------------------------------
+ >  gem "bridgetown-quick-search", ">= 0", :group => :bridgetown_plugins
+ #  -------------------------------------------
+         run    Gem not added due to bundler error
+  Exception raised: Errno::ENOENT
+No such file or directory @ dir_s_mkdir - src/theme_backups/20221218132228/src/_components
+
+=end
 def gem_installed?(gem_name)
   #https://stackoverflow.com/questions/22211711/how-to-check-if-a-gem-is-installed
   # gem query --silent --installed --exact rubygems --version 2.0.0
-  result = `gem list bridgetown-feed`
+  result = `gem list #{gem_name}`
   return true if result =~ /#{gem_name}/
   false
 end
