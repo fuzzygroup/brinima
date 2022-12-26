@@ -8,8 +8,12 @@
 # 4. Front End
 # 5. Everything Else
 
-
-
+#
+# TO TEST THIS AUTOMATION, just run
+# 
+#  bin/bridgetown apply https://github.com/fuzzygroup/brinima
+#
+# AFTER IT IS COMMITTED TO GIT AND YOU WAIT 5 minutes for any server side git sync
 
 #
 # START DEF METHODS
@@ -105,6 +109,68 @@ def backup_existing_theme_files
   single_files_to_delete.each do |f|
     FileUtils.rm(f)
   end
+end
+
+
+
+#
+# Create a backup directory for frontend files and copy data over to it
+# this backup directory is UNDER the MASTER_BACKUP_DIR to avoid issues
+# with build compliation
+#
+# TODO (future): dry up this code; largely redundant with other backup routine
+#
+def backup_existing_frontend_files
+  
+  unless Dir.exist? MASTER_FRONTEND_BACKUP_DIR
+    # generate a master backup directory  
+    FileUtils.mkdir_p MASTER_FRONTEND_BACKUP_DIR
+  end
+  
+  # generate timestamp
+  backup_time_stamp = Time.now.utc.strftime("%Y%m%d%H%M%S")
+  # hacky way to check for dev mode; look for my personal home dir
+  backup_time_stamp = '20221218132228' if Dir.exist?("/Users/sjohnson/")
+  
+  backup_directory = File.join(MASTER_FRONTEND_BACKUP_DIR, backup_time_stamp)
+  
+  #TODO - error handling
+  unless Dir.exist?(backup_directory)
+    FileUtils.mkdir(backup_directory)
+  end
+  # copy all files from directorys
+  source_directories = []
+  source_directories << "frontend/styles"
+  source_directories << "frontend/javascript"
+  source_directories << "frontend/fonts"
+  # TODO -- javascript and css
+
+  # copy files from sources
+  source_directories.each do |source_dir|
+    destination_dir = File.join(backup_directory, source_dir)
+    #TODO - error handling
+    unless Dir.exist?(destination_dir)
+      FileUtils.mkdir_p(destination_dir)
+    end
+    Dir.glob(File.join(source_dir, '*')).each do |f|
+      FileUtils.cp f, destination_dir unless File.exists?(File.join(destination_dir, f))
+    end
+  end
+  
+  #
+  # Now remove existing files 
+  #
+  puts "Now removing existing files except for site_metadata.yml"
+  directories_of_all_files_to_delete = []
+  directories_of_all_files_to_delete << 'frontend/styles'
+  directories_of_all_files_to_delete << 'frontend/javascript'
+  directories_of_all_files_to_delete << 'frontend/fonts'
+  directories_of_all_files_to_delete.each do |dir|
+    Dir.glob(File.join(dir, '*')).each do |f|
+      FileUtils.rm(f)
+    end
+  end
+  
 end
 
 # Copied from: https://github.com/mattbrictson/rails-template
@@ -231,11 +297,13 @@ THEME_NAME = "brinima"
 # end
 
 MASTER_BACKUP_DIR = "src/theme_backups"
+MASTER_FRONTEND_BACKUP_DIR = "src/theme_backups/frontend"
 
 #
 # Backup all existing theme files
 #
 backup_existing_theme_files
+backup_existing_frontend_files
 
 raise "Foo -- test if the backup worked!!!"
 
@@ -276,3 +344,9 @@ if twitter != "" && twitter != "no"
 end
 
 say_status :bulmatown, "Theme installation complete! Enjoy your fresh new design :)"
+
+if yes? "Every blog has a table of contents -- the index.md template -- which can EITHER list all posts as a table of contents (just links to every post) -or- list the full content of your last 10 posts and then link to all posts (using the posts.md template).  Type Y if you want to list the full content of your last 10 posts or N to just have a table of contents.  Side note: If you have lots of long posts then you likely want to say N"
+else
+end
+
+# copy over readme_brinima.md to 

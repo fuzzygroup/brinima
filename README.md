@@ -1,6 +1,12 @@
-# The Brinima Theme
+# Brinima -- Blogging for Bridgetown
 
 This Bridgetown theme is a port of the Jekyll Minima theme to Bridgetown.
+
+This is a template for making a BLOG with Bridgetown -- not a static site -- an old school BLOG:
+
+* date stamped posts
+* ordered chronologically from newest to oldest
+* with a feed of the posts
 
 ## I'll Start with an Apology
 
@@ -19,4 +25,5 @@ efforts so better to try and do something good than not.
 In case you are interested in the things that I do:
 
 * [Cartazzi](https://www.cartazzi.com) -- Cartazzi is my answer to what I call "Tab Hell".  Cartazzi allows any web developer to build an easy to use interface to all their tooling for a web development project
-* [FuzzyBlog](https://fuzzyblog.io/) -- the blog that used Minima which is 
+* [FuzzyBlog](https://fuzzyblog.io/) -- the blog that used Minima which
+* [My Recipes](https://recipes.fuzzyblog.io) -- my recipe collection 
