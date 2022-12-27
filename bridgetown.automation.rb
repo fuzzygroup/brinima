@@ -188,30 +188,35 @@ end
 # NOTE: This works FROM github so uses copy_file to move the file over
 #
 
-def install_theme_files(source_dir, dest_dir)
+def install_theme_files
   #
   # Move the source repo local
   #
+  add_template_repository_to_source_path
   
   #copy_file "example/src/_layouts/#{file}.liquid", target
   
   #
   # Install all frontend files
   #
-  install_theme_files("src/frontend/javascript", "frontend/javascript")
-  install_theme_files("src/frontend/styles", "frontend/styles")
-
-
+  # install_theme_files("src/frontend/javascript", "frontend/javascript")
+  # install_theme_files("src/frontend/styles", "frontend/styles")
   #
-  # Install all src/_components files -- footer.liquid	head.liquid	navbar.liquid
   #
-  install_theme_files("src/components", "src/_components")
-
-
+  # #
+  # # Install all src/_components files -- footer.liquid  head.liquid  navbar.liquid
+  # #
+  # install_theme_files("src/components", "src/_components")
+  #copy_file "example/src/components/#{file}.liquid", target
+  copy_file "example/src/components/footer.liquid", "src/_components/footer.liquid"
+  #copy_file "example/src/components/head.liquid", "src/_components/head.liquid"
+  #copy_file "example/src/components/navbar.liquid", "src/_components/navbar.liquid"
   #
-  # Install all src/_layouts files -- default.liquid	page.liquid	post.liquid
   #
-  install_theme_files("src/layouts", "src/_layouts")
+  # #
+  # # Install all src/_layouts files -- default.liquid  page.liquid  post.liquid
+  # #
+  # install_theme_files("src/layouts", "src/_layouts")
 
   
   
