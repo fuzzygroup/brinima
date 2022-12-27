@@ -48,6 +48,8 @@ end
 #
 # Create a backup directory for theme files and copy data over to it
 #
+# NOTE: This works purely locally so normal Ruby file operations apply
+#
 def backup_existing_theme_files
   unless Dir.exist? MASTER_BACKUP_DIR
     # generate a master backup directory  
@@ -99,7 +101,7 @@ def backup_existing_theme_files
   directories_of_all_files_to_delete << 'src/_layouts'
   directories_of_all_files_to_delete.each do |dir|
     Dir.glob(File.join(dir, '*')).each do |f|
-      FileUtils.rm(f)
+      FileUtils.rm(f) if File.exists?(f)
     end
   end
   
@@ -107,7 +109,7 @@ def backup_existing_theme_files
   single_files_to_delete << File.join('src', 'index.md')
   single_files_to_delete << File.join('src', 'posts.md')
   single_files_to_delete.each do |f|
-    FileUtils.rm(f)
+    FileUtils.rm(f) if File.exists?(f)
   end
 end
 
@@ -119,6 +121,8 @@ end
 # with build compliation
 #
 # TODO (future): dry up this code; largely redundant with other backup routine
+#
+# NOTE: This works purely locally so normal Ruby file operations apply
 #
 def backup_existing_frontend_files
   
@@ -171,6 +175,14 @@ def backup_existing_frontend_files
     end
   end
   
+end
+
+#
+# NOTE: This works FROM github so uses copy_file to move the file over
+#
+
+def install_theme_files(source_dir, dest_dir)
+  #copy_file "example/src/_layouts/#{file}.liquid", target
 end
 
 # Copied from: https://github.com/mattbrictson/rails-template
@@ -305,7 +317,50 @@ MASTER_FRONTEND_BACKUP_DIR = "src/theme_backups/frontend"
 backup_existing_theme_files
 backup_existing_frontend_files
 
-raise "Foo -- test if the backup worked!!!"
+#
+# Install all frontend files
+#
+install_theme_files("src/frontend/javascript", "frontend/javascript")
+install_theme_files("src/frontend/styles", "frontend/styles")
+
+
+#
+# Install all src/_components files -- footer.liquid	head.liquid	navbar.liquid
+#
+install_theme_files("src/components", "src/_components")
+
+
+#
+# Install all src/_layouts files -- default.liquid	page.liquid	post.liquid
+#
+install_theme_files("src/layouts", "src/_layouts")
+
+
+#
+# Install Back of Blog Index files -- 
+#
+#TODO
+
+#
+# Install Index to Podcasts 
+#
+#TODO
+
+
+#
+# Install Index to YouTube
+#
+#TODO
+
+
+#
+# Install Index to Twitter Links
+#
+#TODO
+
+
+
+#raise "Foo -- test if the backup worked!!!"
 
 
 
@@ -317,7 +372,7 @@ if yes? "The Bulmatown installer can update styles, layouts, and page templates 
   add_template_repository_to_source_path
 
   create_file "frontend/styles/index.scss", '@import "~bulmatown/frontend/styles"'
-
+  debugger
   ["home", "page", "post"].each { |f| copy_if_exists(f) }
   substitute_in_default_if_exists
 
