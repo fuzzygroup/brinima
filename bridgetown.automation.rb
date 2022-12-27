@@ -113,6 +113,13 @@ def backup_existing_theme_files
   end
 end
 
+#
+# Tests if in development mode like Rails.development?
+#
+def bridgetown_development?
+  return true if Dir.exist?("/Users/sjohnson/")
+end
+
 
 
 #
@@ -134,7 +141,7 @@ def backup_existing_frontend_files
   # generate timestamp
   backup_time_stamp = Time.now.utc.strftime("%Y%m%d%H%M%S")
   # hacky way to check for dev mode; look for my personal home dir
-  backup_time_stamp = '20221218132228' if Dir.exist?("/Users/sjohnson/")
+  backup_time_stamp = '20221218132228' if bridgetown_development?
   
   backup_directory = File.join(MASTER_FRONTEND_BACKUP_DIR, backup_time_stamp)
   
@@ -182,7 +189,32 @@ end
 #
 
 def install_theme_files(source_dir, dest_dir)
+  #
+  # Move the source repo local
+  #
+  
   #copy_file "example/src/_layouts/#{file}.liquid", target
+  
+  #
+  # Install all frontend files
+  #
+  install_theme_files("src/frontend/javascript", "frontend/javascript")
+  install_theme_files("src/frontend/styles", "frontend/styles")
+
+
+  #
+  # Install all src/_components files -- footer.liquid	head.liquid	navbar.liquid
+  #
+  install_theme_files("src/components", "src/_components")
+
+
+  #
+  # Install all src/_layouts files -- default.liquid	page.liquid	post.liquid
+  #
+  install_theme_files("src/layouts", "src/_layouts")
+
+  
+  
 end
 
 # Copied from: https://github.com/mattbrictson/rails-template
@@ -195,8 +227,12 @@ def add_template_repository_to_source_path
     require 'tmpdir'
 
     source_paths.unshift(tempdir = Dir.mktmpdir(DIR_NAME + '-'))
-    at_exit { FileUtils.remove_entry(tempdir) }
+    #TODO restore this
+    at_exit { FileUtils.remove_entry(tempdir) } if !bridgetown_development?
     run("git clone --quiet #{GITHUB_PATH.shellescape} #{tempdir.shellescape}")
+    puts "\n\n\n\n"
+    puts "tempdir = #{tempdir}"
+    puts "\n\n\n\n"
 
     if (branch = __FILE__[%r{#{DIR_NAME}/(.+)/bridgetown.automation.rb}, 1])
       Dir.chdir(tempdir) { system("git checkout #{branch}") }
@@ -318,22 +354,10 @@ backup_existing_theme_files
 backup_existing_frontend_files
 
 #
-# Install all frontend files
+# Install all theme files
 #
-install_theme_files("src/frontend/javascript", "frontend/javascript")
-install_theme_files("src/frontend/styles", "frontend/styles")
+install_theme_files
 
-
-#
-# Install all src/_components files -- footer.liquid	head.liquid	navbar.liquid
-#
-install_theme_files("src/components", "src/_components")
-
-
-#
-# Install all src/_layouts files -- default.liquid	page.liquid	post.liquid
-#
-install_theme_files("src/layouts", "src/_layouts")
 
 
 #
@@ -372,7 +396,7 @@ if yes? "The Bulmatown installer can update styles, layouts, and page templates 
   add_template_repository_to_source_path
 
   create_file "frontend/styles/index.scss", '@import "~bulmatown/frontend/styles"'
-  debugger
+  #debugger
   ["home", "page", "post"].each { |f| copy_if_exists(f) }
   substitute_in_default_if_exists
 
