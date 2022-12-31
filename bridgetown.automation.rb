@@ -263,6 +263,9 @@ def substitute_in_default_if_exists
   end
 end
 
+def install_post_rake_task
+end
+
 
 
 #
@@ -362,6 +365,15 @@ backup_existing_frontend_files
 # Install all theme files
 #
 install_theme_files
+
+
+#
+# Install Post Generator Rake Task
+#
+if yes? "The Brinima theme includes a generator to create blog posts more easily.  Do you want to install this generator? (Y/N)"
+  lines = File.read("blog_post_generator.rake")
+  inject_into_file "Rakefile", lines, before: "namespace :frontend do\n"
+end
 
 
 
