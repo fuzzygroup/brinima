@@ -208,7 +208,7 @@ def install_theme_files
   # #
   # install_theme_files("src/components", "src/_components")
   #copy_file "example/src/components/#{file}.liquid", target
-  copy_file "example/src/components/footer.liquid", "src/_components/footer.liquid"
+  copy_file "src/components/footer.liquid", "src/_components/footer.liquid"
   #copy_file "example/src/components/head.liquid", "src/_components/head.liquid"
   #copy_file "example/src/components/navbar.liquid", "src/_components/navbar.liquid"
   #
